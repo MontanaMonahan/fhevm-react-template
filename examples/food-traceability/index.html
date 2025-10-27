@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Private Food Traceability System</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/5.7.2/ethers.umd.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🌱 Private Food Traceability System</h1>
+            <div class="wallet-info">
+                <button id="connectWallet" class="btn btn-primary">Connect Wallet</button>
+                <div id="walletAddress" class="wallet-address"></div>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="dashboard">Dashboard</button>
+            <button class="tab-btn" data-tab="register">Register Source</button>
+            <button class="tab-btn" data-tab="batch">Create Batch</button>
+            <button class="tab-btn" data-tab="verify">Verify Batch</button>
+            <button class="tab-btn" data-tab="track">Track Product</button>
+        </nav>
+
+        <main>
+            <!-- Dashboard Tab -->
+            <section id="dashboard" class="tab-content active">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <h3>Total Sources</h3>
+                        <div class="stat-number" id="totalSources">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Total Batches</h3>
+                        <div class="stat-number" id="totalBatches">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Verifications</h3>
+                        <div class="stat-number" id="totalVerifications">0</div>
+                    </div>
+                    <div class="stat-card">
+                        <h3>Your Role</h3>
+                        <div class="stat-text" id="userRole">Not Connected</div>
+                    </div>
+                </div>
+
+                <div class="permissions-section">
+                    <h3>Manage Permissions</h3>
+                    <div class="permission-controls">
+                        <div class="input-group">
+                            <input type="text" id="producerAddress" placeholder="Producer Address">
+                            <button id="authorizeProducer" class="btn btn-secondary">Authorize Producer</button>
+                        </div>
+                        <div class="input-group">
+                            <input type="text" id="inspectorAddress" placeholder="Inspector Address">
+                            <button id="certifyInspector" class="btn btn-secondary">Certify Inspector</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Register Source Tab -->
+            <section id="register" class="tab-content">
+                <div class="form-container">
+                    <h2>Register Food Source</h2>
+                    <form id="registerForm">
+                        <div class="form-group">
+                            <label for="farmId">Farm ID:</label>
+                            <input type="number" id="farmId" required min="1" max="999999">
+                        </div>
+                        <div class="form-group">
+                            <label for="coordinates">Coordinates (encoded):</label>
+                            <input type="number" id="coordinates" required min="1" max="999999999">
+                        </div>
+                        <div class="form-group">
+                            <label for="harvestDate">Harvest Date (timestamp):</label>
+                            <input type="number" id="harvestDate" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="quality">Quality Score (0-100):</label>
+                            <input type="number" id="quality" required min="0" max="100">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Register Source</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Create Batch Tab -->
+            <section id="batch" class="tab-content">
+                <div class="form-container">
+                    <h2>Create Product Batch</h2>
+                    <form id="batchForm">
+                        <div class="form-group">
+                            <label for="sourceId">Source ID:</label>
+                            <input type="number" id="sourceId" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="processingId">Processing Facility ID:</label>
+                            <input type="number" id="processingId" required min="1" max="999999">
+                        </div>
+                        <div class="form-group">
+                            <label for="processDate">Process Date (timestamp):</label>
+                            <input type="number" id="processDate" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="temperature">Storage Temperature (°C):</label>
+                            <input type="number" id="temperature" required min="-50" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="humidity">Storage Humidity (%):</label>
+                            <input type="number" id="humidity" required min="0" max="100">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Create Batch</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Verify Batch Tab -->
+            <section id="verify" class="tab-content">
+                <div class="form-container">
+                    <h2>Verify Product Batch</h2>
+                    <form id="verifyForm">
+                        <div class="form-group">
+                            <label for="batchId">Batch ID:</label>
+                            <input type="number" id="batchId" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="inspectorId">Inspector ID:</label>
+                            <input type="number" id="inspectorId" required min="1" max="999999">
+                        </div>
+                        <div class="form-group">
+                            <label for="inspectionDate">Inspection Date (timestamp):</label>
+                            <input type="number" id="inspectionDate" required min="1">
+                        </div>
+                        <div class="form-group">
+                            <label for="safetyScore">Safety Score (0-100):</label>
+                            <input type="number" id="safetyScore" required min="0" max="100">
+                        </div>
+                        <div class="form-group">
+                            <label>
+                                <input type="checkbox" id="passed"> Passed Inspection
+                            </label>
+                        </div>
+                        <button type="submit" class="btn btn-primary">Verify Batch</button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Track Product Tab -->
+            <section id="track" class="tab-content">
+                <div class="form-container">
+                    <h2>Track Product Information</h2>
+                    <div class="track-controls">
+                        <div class="input-group">
+                            <input type="number" id="trackBatchId" placeholder="Enter Batch ID" min="1">
+                            <button id="trackBatch" class="btn btn-primary">Track Batch</button>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="trackSourceId" placeholder="Enter Source ID" min="1">
+                            <button id="trackSource" class="btn btn-primary">Track Source</button>
+                        </div>
+                        <div class="input-group">
+                            <input type="number" id="trackVerificationId" placeholder="Enter Verification ID" min="1">
+                            <button id="trackVerification" class="btn btn-primary">Track Verification</button>
+                        </div>
+                    </div>
+                    <div id="trackingResults" class="tracking-results"></div>
+                </div>
+            </section>
+        </main>
+
+        <div id="notifications" class="notifications"></div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
