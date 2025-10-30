@@ -25,6 +25,8 @@ This SDK provides a universal, wagmi-like interface for building confidential fr
 
 📦 **Contract Address**: `0x504CC797e32F745517E5ee3Fe30e2aB4570E7c5C` ([View on Etherscan](https://sepolia.etherscan.io/address/0x504CC797e32F745517E5ee3Fe30e2aB4570E7c5C))
 
+**Video Demo**:  demo.mp4
+
 A privacy-preserving blockchain-based food origin tracking system demonstrating real-world FHE applications for secure supply chain management.
 
 ## 🚀 Quick Start
