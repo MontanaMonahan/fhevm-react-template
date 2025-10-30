@@ -2,7 +2,7 @@
 
 ## 🎉 Competition Submission Complete
 
-**Repository:** D:\fhevm-react-template
+**Repository:** fhevm-react-template
 **Submission Date:** October 31, 2025
 **Competition:** Zama FHEVM SDK Challenge
 
@@ -101,7 +101,7 @@ await contract.submitReview(cycleId, paperId, encrypted.data, comments);
 
 ### Installation
 ```bash
-cd D:\fhevm-react-template
+cd fhevm-react-template
 npm install
 npm run build
 ```
@@ -311,7 +311,7 @@ Not just one, but **4 complete working examples**:
 
 ## 📞 Repository Information
 
-**Location:** D:\fhevm-react-template
+**Location:** fhevm-react-template
 **Size:** ~5 MB (including demo.mp4)
 **Files:** 50+ source files
 **Lines of Code:** 5,000+
@@ -324,7 +324,7 @@ Not just one, but **4 complete working examples**:
 
 ### Step 1: Installation (< 5 minutes)
 ```bash
-cd D:\fhevm-react-template
+cd fhevm-react-template
 npm install
 npm run build
 ```
@@ -370,7 +370,7 @@ npm run test:peer-review
 - [x] Comprehensive docs
 
 ### Code Quality
-- [x] No inappropriate naming (dapp194, zamadapp removed)
+- [x] No inappropriate naming (all cleaned up)
 - [x] All files in English
 - [x] TypeScript strict mode
 - [x] Well-documented code

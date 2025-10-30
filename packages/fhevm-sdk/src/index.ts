@@ -5,18 +5,44 @@
  * Works with: Node.js, Next.js, React, Vue, or any frontend framework
  */
 
-export { FhevmClient } from './client';
+// Core exports
+export { FhevmClient } from './core/fhevm';
+export { FhevmClient as default } from './core/fhevm';
+
+// Legacy exports for backward compatibility
+export { FhevmClient as FhevmClient } from './client';
 export { createFhevmInstance, type FhevmInstanceConfig } from './instance';
-export { encryptInput, decryptOutput } from './encryption';
-export { useUserDecrypt, usePublicDecrypt } from './decrypt';
+
+// Utilities
+export {
+  encryptInput,
+  encryptUint32,
+  encryptUint64,
+  encryptBool,
+  encryptAddress,
+  decryptOutput
+} from './utils/encryption';
+export {
+  userDecrypt,
+  publicDecrypt,
+  batchUserDecrypt
+} from './utils/decryption';
+
+// Hooks
+export { createFhevmHook, type UseFhevmState } from './hooks/useFhevm';
+
+// Types
 export type {
   FhevmInstance,
   EncryptedInput,
   DecryptionRequest,
-  DecryptionResult
+  DecryptionResult,
+  SdkConfig,
+  ChainConfig,
+  EIP712Data
 } from './types';
 
-// Re-export common utilities
+// Configuration
 export {
   getChainConfig,
   isValidChainId,

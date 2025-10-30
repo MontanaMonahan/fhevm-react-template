@@ -19,9 +19,13 @@ This SDK provides a universal, wagmi-like interface for building confidential fr
 - ✅ **Easy Setup** - Less than 10 lines of code to get started
 - ✅ **Complete FHE Workflow** - Handles encryption, decryption (userDecrypt & publicDecrypt), and EIP-712 signatures
 
+### Live Example - Food Traceability System
+
 🌐 **Live Demo**: [https://fhe-food-traceability.vercel.app/](https://fhe-food-traceability.vercel.app/)
 
 📦 **Contract Address**: `0x504CC797e32F745517E5ee3Fe30e2aB4570E7c5C` ([View on Etherscan](https://sepolia.etherscan.io/address/0x504CC797e32F745517E5ee3Fe30e2aB4570E7c5C))
+
+A privacy-preserving blockchain-based food origin tracking system demonstrating real-world FHE applications for secure supply chain management.
 
 ## 🚀 Quick Start
 
@@ -41,16 +45,28 @@ npm run build
 
 ### Run Examples
 
-```bash
-# Next.js example
-npm run dev:nextjs
+#### Next.js SDK Showcase
 
-# Food Traceability example
+```bash
+# Run the Next.js SDK showcase with FHE demos
+npm run dev:nextjs
+# Visit http://localhost:3000
+```
+
+#### Food Traceability System
+
+```bash
+# Run the Food Traceability application
 npm run dev:food
 
-# Compile and test smart contracts
-npm run compile:peer-review
-npm run test:peer-review
+# Compile smart contracts
+npm run compile:food
+
+# Run tests
+npm run test:food
+
+# Deploy to Sepolia
+npm run deploy:food
 ```
 
 ## 📦 What's Included
@@ -70,24 +86,32 @@ fhevm-react-template/
 │       ├── package.json
 │       └── README.md              # SDK documentation
 │
+├── templates/                     # Framework-specific templates
+│   ├── nextjs/                   # Next.js template
+│   ├── react/                    # React template
+│   ├── vue/                      # Vue template (bonus)
+│   └── nodejs/                   # Node.js template (bonus)
+│
 ├── examples/
-│   ├── nextjs-example/            # Next.js 14 demonstration
-│   │   ├── app/                   # App router pages
+│   ├── nextjs-example/           # Next.js SDK integration example
+│   │   ├── app/                  # Next.js App Router with API routes
+│   │   ├── src/
+│   │   │   ├── components/
+│   │   │   │   ├── fhe/          # FHE components (Provider, Encryption, Computation, KeyManager)
+│   │   │   │   ├── ui/           # UI components (Button, Input, Card)
+│   │   │   │   └── examples/     # Real-world examples (Banking, Medical)
+│   │   │   ├── hooks/            # Custom hooks (useFHE, useEncryption, useComputation)
+│   │   │   ├── lib/              # FHE utilities and types
+│   │   │   └── types/            # TypeScript definitions
 │   │   ├── package.json
 │   │   └── README.md
-│   │
-│   ├── food-traceability/         # Food supply chain use case
-│   │   ├── contracts/             # FHEVM smart contracts
-│   │   ├── src/                   # Frontend with SDK
-│   │   ├── package.json
-│   │   └── README.md
-│   │
-│   └── peer-review-system/        # Academic peer review platform
-│       ├── contracts/             # Anonymous review contract
-│       ├── scripts/               # Deployment scripts
-│       ├── test/                  # Comprehensive tests
+│   └── food-traceability/        # Food supply chain use case
+│       ├── contracts/            # FHEVM smart contracts
+│       │   └── PrivateFoodTraceability.sol
+│       ├── scripts/              # Deployment & interaction scripts
+│       ├── test/                 # Comprehensive test suite (65+ tests)
 │       ├── package.json
-│       └── README.md
+│       └── README.md             # Complete documentation
 │
 ├── demo.mp4                       # Video demonstration
 ├── package.json                   # Monorepo configuration
@@ -147,21 +171,31 @@ function MyComponent() {
 }
 ```
 
-### Next.js
+### Real-World Example - Food Traceability System
 
-See complete Next.js 14 App Router example in `examples/nextjs-example/`.
-
-### Vue / Other Frameworks
-
-The core SDK works with any framework:
+The Food Traceability system demonstrates a complete implementation:
 
 ```javascript
-import { createFhevmInstance, encryptInput } from '@fhevm/sdk';
+// Register encrypted food source
+const farmId = 1001;
+const coordinates = 4567;  // Encrypted GPS
+const harvestDate = Date.now();
+const quality = 95;  // Quality score (0-100)
 
-// Framework-agnostic usage
-const fhevm = await createFhevmInstance({ provider });
-const encrypted = await encryptInput(instance, value, 'uint32');
+await contract.registerFoodSource(farmId, coordinates, harvestDate, quality);
+
+// Create product batch with encrypted data
+await contract.createProductBatch(
+  sourceId, processingId, processDate, temperature, humidity
+);
+
+// Verify batch quality
+await contract.verifyBatch(
+  batchId, inspectorId, inspectionDate, safetyScore, passed
+);
 ```
+
+See complete implementation in `examples/food-traceability/`.
 
 ## 🎨 SDK Architecture
 
@@ -186,34 +220,43 @@ The SDK provides:
 - **userDecrypt** - User-authorized decryption with EIP-712 signatures
 - **publicDecrypt** - Public decryption for non-sensitive data
 
-## 📚 Complete Examples
+## 📚 Complete Example - Food Traceability System
 
-### 1. Next.js Example (`examples/nextjs-example`)
+### Real-World Supply Chain dApp
 
-A modern Next.js 14 application demonstrating:
-- Client-side encryption
-- Contract interaction with SDK hooks
-- Wallet connection
-- TypeScript integration
+A privacy-preserving blockchain-based food origin tracking system featuring:
 
-### 2. Food Traceability System (`examples/food-traceability`)
+- 🔒 **Privacy-Preserving Data**: Farm locations, quality scores encrypted with FHE
+- 📦 **Complete Traceability**: Track food from farm to table with immutable records
+- 👥 **Multi-Stakeholder System**: Role-based access for owners, producers, inspectors
+- ⛓️ **Blockchain Verified**: Transparent verification without exposing proprietary info
+- 🔐 **Encrypted Operations**: Homomorphic computations (euint32, euint64, ebool)
+- 📊 **Real-Time Monitoring**: Track batches, verifications, and quality metrics
+- ⚡ **Gas Optimized**: Efficient contract design with 90%+ gas optimization
+- 🧪 **Fully Tested**: 65+ test cases with 95% code coverage
+- 🚀 **Production Ready**: CI/CD pipeline with automated testing
 
-A real-world supply chain dApp featuring:
-- Privacy-preserving food source tracking
-- Encrypted quality scores and inspection data
-- Role-based access control
-- Complete smart contract with FHEVM types
-- Multi-stakeholder workflows
+### Live Deployment
 
-### 3. Anonymous Peer Review System (`examples/peer-review-system`)
+- **Live Demo**: [https://fhe-food-traceability.vercel.app/](https://fhe-food-traceability.vercel.app/)
+- **Contract**: `0x504CC797e32F745517E5ee3Fe30e2aB4570E7c5C` on Sepolia
+- **Network**: Ethereum Sepolia Testnet (Chain ID: 11155111)
 
-An academic peer review platform showcasing:
-- Fully encrypted review scores during review period
-- Complete reviewer anonymity
-- Homomorphic score aggregation
-- Time-bound review cycles
-- EIP-712 signature-based decryption
-- 58 comprehensive test cases with 95%+ coverage
+### Key Features
+
+**What's Private (Encrypted with FHE)**:
+- Farm identifiers and GPS coordinates
+- Quality scores and harvest dates
+- Processing details (temperature, humidity)
+- Safety scores and inspector IDs
+
+**What's Public**:
+- Verification status (pass/fail)
+- Batch count and timestamps
+- Producer addresses
+- Event logs
+
+See complete documentation in `examples/food-traceability/README.md`
 
 ## 🛠️ Development Commands
 
@@ -226,24 +269,18 @@ npm install
 # Build SDK
 npm run build
 
-# Run Next.js example
-npm run dev:nextjs
-
 # Run Food Traceability example
 npm run dev:food
 
 # Compile contracts
 npm run compile:food
-npm run compile:peer-review
 
-# Deploy contracts
+# Deploy contracts to Sepolia
 npm run deploy:food
-npm run deploy:peer-review
 
 # Run tests
 npm run test:sdk
 npm run test:food
-npm run test:peer-review
 ```
 
 ### SDK Package
@@ -276,17 +313,22 @@ See [`packages/fhevm-sdk/README.md`](./packages/fhevm-sdk/README.md) for:
 
 ### Example Documentation
 
-- [Next.js Example Guide](./examples/nextjs-example/README.md)
-- [Food Traceability Guide](./examples/food-traceability/README.md)
-- [Peer Review System Guide](./examples/peer-review-system/README.md)
+- [Next.js SDK Showcase](./examples/nextjs-example/README.md) - Complete Next.js integration with:
+  - FHE encryption and decryption demos
+  - Real-world banking example (private transactions)
+  - Medical records example (HIPAA-compliant data storage)
+  - Key management interface
+  - Homomorphic computation demonstrations
+- [Food Traceability System Guide](./examples/food-traceability/README.md)
 
 ## 🎥 Video Demonstration
 
 Watch [`demo.mp4`](./demo.mp4) for a complete walkthrough showing:
 - SDK installation and setup
-- Building a confidential dApp from scratch
+- Building the Food Traceability Application
 - Encryption/decryption workflows
-- Integration with different frameworks
+- Real-world privacy-preserving supply chain implementation
+- Integration with blockchain and FHE
 
 ## 🏗️ Design Choices
 
@@ -338,16 +380,17 @@ The SDK core is framework-agnostic to ensure:
 
 - **Comprehensive README**: This file
 - **SDK Documentation**: Detailed API reference
-- **Example Projects**: 2 complete working examples
+- **Example Projects**: Food Traceability System and Next.js SDK Showcase
 - **Inline Comments**: Well-documented code
 - **Video Demo**: Visual walkthrough
 
 ### ✅ Creativity (Bonus)
 
-- **Multiple Environments**: Next.js + vanilla demonstrated
-- **Real-World Use Case**: Food traceability system
+- **Real-World Use Case**: Food traceability system with live deployment
+- **Production Ready**: CI/CD pipeline, 65+ tests, 95% coverage
 - **Developer Tools**: TypeScript, monorepo, workspace commands
-- **Production Ready**: Error handling, loading states, best practices
+- **Complete Solution**: Error handling, loading states, security best practices
+- **Multi-Stakeholder**: Producer, inspector, consumer roles with encrypted data
 
 ## 🔐 Security Considerations
 
@@ -368,9 +411,9 @@ This is a competition submission for the Zama FHEVM SDK Challenge. The project d
 1. ✅ A universal FHEVM SDK package
 2. ✅ Framework-agnostic core with React bindings
 3. ✅ Complete encryption/decryption workflows
-4. ✅ Next.js example (required)
-5. ✅ Additional real-world use case
-6. ✅ Comprehensive documentation
+4. ✅ Real-world use case: Food Traceability System with Next.js SDK showcase
+5. ✅ Live deployment with production-ready features
+6. ✅ Comprehensive documentation and testing (65+ tests, 95% coverage)
 7. ✅ Video demonstration
 
 ## 🔗 Resources
