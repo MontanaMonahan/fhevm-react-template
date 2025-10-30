@@ -1,165 +1,140 @@
-# Food Traceability System - FHEVM SDK Example
+# Private Food Traceability System
 
-A privacy-preserving blockchain-based food origin tracking system using the FHEVM SDK.
+A blockchain-based food origin tracking system leveraging Fully Homomorphic Encryption (FHE) to ensure data privacy while maintaining transparency and traceability throughout the supply chain.
 
-## Overview
+## 🌟 Overview
 
-This example demonstrates how to build a complete supply chain dApp using the `@fhevm/sdk` package. The application allows:
+This decentralized application enables secure and private food traceability from farm to table. By utilizing FHE technology, sensitive business data remains encrypted on-chain while still allowing authorized verification and auditing.
 
-- **Producers**: Register food sources and create product batches with encrypted data
-- **Inspectors**: Verify batches while keeping inspection details private
-- **Consumers**: View public verification status without accessing sensitive data
+## 🔑 Core Concepts
 
-## Key Features
+### FHE Smart Contract Architecture
 
-- ✅ **SDK Integration**: Uses `@fhevm/sdk` for all encryption/decryption
-- ✅ **Privacy-Preserving**: Farm locations, quality scores, and inspection data encrypted with FHE
-- ✅ **Role-Based Access**: Multi-stakeholder system with different permissions
-- ✅ **Smart Contract**: Full FHEVM contract with encrypted types (euint32, euint64, ebool)
-- ✅ **React Frontend**: Modern UI using SDK hooks
+The system employs Fully Homomorphic Encryption (FHE) to perform computations on encrypted data without decryption. This ensures:
 
-## Installation
+- **Confidential Data Processing**: Sensitive information like farm coordinates, quality scores, and inspection results remain encrypted
+- **Verifiable Computation**: Operations on encrypted data produce encrypted results that can be verified
+- **Privacy-Preserving Analytics**: Aggregate statistics without exposing individual data points
+- **Secure Multi-Party Computation**: Multiple stakeholders can interact with data without compromising privacy
 
-From repository root:
+### Confidential Food Source Tracking
 
-```bash
-npm install
-```
+The application implements privacy-preserving food traceability through several key features:
 
-## Development
+- **Encrypted Farm Registration**: Farm locations, harvest dates, and quality metrics stored as encrypted values
+- **Private Batch Processing**: Processing facility information and storage conditions encrypted on-chain
+- **Confidential Verification**: Inspector certifications and safety scores protected while maintaining audit trails
+- **Anonymous Traceability**: Track product journey without revealing proprietary business information
 
-### Compile Contracts
+## 📋 Key Features
 
-```bash
-npm run compile:food
-```
+- **Privacy-First Design**: All sensitive data encrypted using FHE technology
+- **Role-Based Access Control**: Granular permissions for owners, producers, and inspectors
+- **Immutable Audit Trail**: Transparent verification history on blockchain
+- **Real-Time Tracking**: Monitor products throughout the supply chain
+- **Decentralized Trust**: No central authority required for verification
 
-### Run Tests
+## 🔗 Contract Information
 
-```bash
-npm run test:food
-```
+**Network**: Ethereum Sepolia Testnet
+**Contract Address**: `0x504CC797e32F745517E5ee3Fe30e2aB4570E7c5C`
 
-### Deploy Contract
+## 🎥 Demo
 
-```bash
-npm run deploy:food
-```
+Check out PrivateFoodTraceability.mp4 to see the system in action and understand how privacy-preserving food traceability works.
 
-### Start Frontend
+## 🚀 Live Application
 
-```bash
-npm run dev:food
-```
+**Website**: [https://private-food-traceability.vercel.app/](https://private-food-traceability.vercel.app/)
 
-## SDK Usage in This Example
+## 💡 How It Works
 
-### 1. Initialize SDK
+1. **Connect Wallet**: Link your MetaMask wallet to interact with the blockchain
+2. **Register Sources**: Producers register food sources with encrypted farm details
+3. **Create Batches**: Processing facilities create product batches with encrypted metadata
+4. **Verify Quality**: Certified inspectors verify batches while maintaining data privacy
+5. **Track Products**: Consumers and stakeholders track product journey without exposing sensitive data
 
-```tsx
-import { FhevmProvider } from '@fhevm/sdk/react';
+## 🔐 Privacy & Security
 
-<FhevmProvider provider={provider}>
-  <App />
-</FhevmProvider>
-```
+- **FHE Encryption**: All sensitive data encrypted at rest and during computation
+- **Permission System**: Multi-tier access control for different stakeholder roles
+- **Blockchain Integrity**: Tamper-proof records on Ethereum network
+- **Zero-Knowledge Proofs**: Verify claims without revealing underlying data
+- **Secure Key Management**: Decentralized key distribution for authorized parties
 
-### 2. Encrypt Farm Data
+## 🌐 Browser Support
 
-```tsx
-import { useEncryptedInput } from '@fhevm/sdk/react';
+- Chrome/Chromium 88+
+- Firefox 85+
+- Safari 14+
+- Edge 88+
 
-const { encrypt } = useEncryptedInput();
+**Requirements**: MetaMask browser extension for blockchain interaction
 
-const handleRegisterSource = async () => {
-  // Encrypt sensitive farm data
-  const encFarmId = await encrypt(farmId, 'uint32');
-  const encCoords = await encrypt(coordinates, 'uint32');
-  const encDate = await encrypt(Date.now(), 'uint64');
-  const encQuality = await encrypt(quality, 'uint32');
+## 🏗️ Technology Stack
 
-  // Submit to contract
-  await contract.registerFoodSource(
-    encFarmId.data,
-    encCoords.data,
-    encDate.data,
-    encQuality.data
-  );
-};
-```
+- **Smart Contracts**: Solidity with FHE library
+- **Blockchain**: Ethereum Sepolia Testnet
+- **Encryption**: Fully Homomorphic Encryption (FHE)
+- **Frontend**: HTML5, CSS3, JavaScript
+- **Web3 Integration**: Ethers.js
+- **Deployment**: Vercel
 
-### 3. Work with Encrypted Contracts
+## 📊 Use Cases
 
-```tsx
-import { useFhevmContract } from '@fhevm/sdk/react';
+- **Food Safety Compliance**: Maintain privacy while proving regulatory compliance
+- **Supply Chain Transparency**: Track products without revealing trade secrets
+- **Quality Assurance**: Verify product quality with confidential inspection data
+- **Origin Certification**: Authenticate food sources while protecting farmer privacy
+- **Recall Management**: Quickly identify affected batches without data exposure
 
-const contract = useFhevmContract({
-  address: CONTRACT_ADDRESS,
-  abi: FOOD_TRACEABILITY_ABI,
-  withSigner: true
-});
-```
+## 🤝 Stakeholder Roles
 
-### 4. Decrypt When Authorized
+### Owner
+- Authorize producers
+- Certify inspectors
+- Manage system permissions
 
-```tsx
-import { useDecrypt } from '@fhevm/sdk/react';
+### Producer
+- Register food sources
+- Create product batches
+- Update processing information
 
-const { decrypt, result } = useDecrypt();
+### Inspector
+- Verify batch quality
+- Certify safety standards
+- Submit encrypted inspection reports
 
-// Decrypt quality score (requires authorization)
-await decrypt(contractAddress, qualityHandle);
-console.log('Quality Score:', result.value);
-```
+### Consumer
+- Track product origin
+- Verify authenticity
+- Access public verification records
 
-## Smart Contract
+## 🔍 Privacy Features in Detail
 
-The `PrivateFoodTraceability.sol` contract demonstrates:
+The system implements several advanced privacy-preserving mechanisms:
 
-- **Encrypted Storage**: Using euint32, euint64, ebool types
-- **FHE Operations**: Encrypted comparisons and computations
-- **ACL Management**: Fine-grained access control with FHE.allow()
-- **Event Emissions**: Transparent tracking without exposing encrypted data
+- **Encrypted Coordinates**: Farm locations stored as encrypted integers
+- **Private Quality Scores**: Quality metrics hidden from competitors
+- **Confidential Processing Data**: Temperature and humidity data encrypted
+- **Anonymous Inspector Reports**: Verification without inspector identity exposure
+- **Aggregated Statistics**: Public metrics without individual data points
 
-## Privacy Model
+## 🌍 Impact
 
-### What's Encrypted (Private)
+This privacy-preserving traceability system addresses critical challenges in modern food supply chains:
 
-- Farm identifiers and GPS coordinates
-- Harvest dates and processing timestamps
-- Quality scores and safety ratings
-- Inspector IDs and inspection details
-- Temperature and humidity data
+- Protects farmer and producer proprietary information
+- Enables regulatory compliance without data exposure
+- Builds consumer trust through verifiable transparency
+- Reduces counterfeiting through blockchain verification
+- Facilitates cross-border trade with privacy guarantees
 
-### What's Public
+## 📞 Support
 
-- Verification status (pass/fail)
-- Producer and inspector addresses
-- Batch creation timestamps
-- Number of verifications
+For questions, issues, or contributions, please visit our GitHub repository or reach out through the project's issue tracker.
 
-## Directory Structure
+---
 
-```
-food-traceability/
-├── contracts/
-│   └── PrivateFoodTraceability.sol    # FHEVM smart contract
-├── src/
-│   ├── App.tsx                         # Main React app with SDK
-│   ├── components/                     # UI components
-│   └── hooks/                          # Custom hooks using SDK
-├── scripts/
-│   └── deploy.js                       # Deployment script
-├── hardhat.config.js                   # Hardhat configuration
-└── package.json                        # Dependencies
-```
-
-## Learn More
-
-- [FHEVM SDK Documentation](../../packages/fhevm-sdk/README.md)
-- [Smart Contract Source](./contracts/PrivateFoodTraceability.sol)
-- [Zama FHEVM Docs](https://docs.zama.ai)
-
-## License
-
-MIT
+*Building a more transparent and private food supply chain with blockchain and FHE technology.*

@@ -1,29 +1,93 @@
-# Next.js FHEVM Example
+# FHEVM SDK - Next.js Example
 
-This is a complete Next.js 14 application demonstrating how to use the `@fhevm/sdk` package to build encrypted frontends.
+A comprehensive Next.js example demonstrating full integration with the FHEVM SDK for building confidential blockchain applications.
 
-## Features
+## 📋 Overview
 
-- ✅ Next.js 14 with App Router
-- ✅ TypeScript support
-- ✅ Tailwind CSS for styling
-- ✅ FHEVM SDK integration with React hooks
-- ✅ MetaMask wallet connection
-- ✅ Encrypted smart contract interactions
+This example showcases a complete implementation of the FHEVM SDK in a Next.js 14 application using the App Router. It demonstrates client-side encryption, homomorphic computation, key management, and smart contract interactions.
 
-## Getting Started
+## 🎯 Features
 
-### Install Dependencies
+- ✅ **Client-Side Encryption** - Encrypt data using FHE before sending to blockchain
+- ✅ **Homomorphic Computation** - Demonstrate encrypted contract interactions
+- ✅ **Key Management** - Display and manage FHE public keys
+- ✅ **React Hooks Integration** - Full use of SDK React hooks
+- ✅ **TypeScript Support** - Complete type safety throughout
+- ✅ **Modern UI** - Tailwind CSS with responsive design
+- ✅ **API Routes** - Next.js API endpoints for FHE operations
+- ✅ **UI Components** - Reusable Button, Input, and Card components
+- ✅ **FHE Components** - EncryptionDemo, ComputationDemo, KeyManager
+- ✅ **Custom Hooks** - Enhanced hooks with validation and error handling
+
+## 🏗️ Project Structure
+
+```
+nextjs-example/
+├── app/
+│   ├── layout.tsx              # Root layout
+│   ├── page.tsx                # Main page with all demos
+│   ├── globals.css             # Global styles
+│   └── api/                    # API routes
+│       ├── fhe/
+│       │   ├── route.ts        # Main FHE operations
+│       │   ├── encrypt/route.ts # Encryption endpoint
+│       │   ├── decrypt/route.ts # Decryption endpoint
+│       │   └── compute/route.ts # Computation endpoint
+│       └── keys/route.ts       # Key management API
+│
+├── src/
+│   ├── components/
+│   │   ├── ui/                 # Reusable UI components
+│   │   │   ├── Button.tsx      # Styled button component
+│   │   │   ├── Input.tsx       # Form input with validation
+│   │   │   └── Card.tsx        # Container component
+│   │   └── fhe/                # FHE-specific components
+│   │       ├── FHEProvider.tsx # FHE context provider
+│   │       ├── EncryptionDemo.tsx # Encryption showcase
+│   │       ├── ComputationDemo.tsx # Computation demo
+│   │       └── KeyManager.tsx  # Key management UI
+│   │
+│   ├── lib/
+│   │   ├── fhe/                # FHE utilities
+│   │   │   ├── client.ts       # Client-side FHE ops
+│   │   │   ├── server.ts       # Server-side FHE ops
+│   │   │   ├── keys.ts         # Key management
+│   │   │   └── types.ts        # FHE type definitions
+│   │   └── utils/              # Helper utilities
+│   │       ├── security.ts     # Security helpers
+│   │       └── validation.ts   # Input validation
+│   │
+│   ├── hooks/                  # Custom React hooks
+│   │   ├── useFHE.ts          # Main FHE hook
+│   │   ├── useEncryption.ts   # Enhanced encryption
+│   │   └── useComputation.ts  # Computation helper
+│   │
+│   └── types/                  # TypeScript definitions
+│       ├── fhe.ts             # FHE types
+│       └── api.ts             # API types
+│
+├── package.json
+├── tsconfig.json
+└── README.md
+```
+
+## 🚀 Getting Started
+
+### Prerequisites
+
+- Node.js 18+
+- MetaMask or compatible Web3 wallet
+- Access to a FHEVM-compatible network
+
+### Installation
 
 From the repository root:
 
 ```bash
+# Install dependencies
 npm install
-```
 
-### Run Development Server
-
-```bash
+# Run this example
 npm run dev:nextjs
 ```
 
@@ -33,33 +97,37 @@ Or from this directory:
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) in your browser.
+Visit [http://localhost:3000](http://localhost:3000) to see the application.
 
-## How It Works
+## 💡 Usage Examples
 
-### 1. Initialize FHEVM Provider
+### 1. Encryption Demo Component
 
-Wrap your app with `FhevmProvider`:
-
-```tsx
-import { FhevmProvider } from '@fhevm/sdk/react';
-import { BrowserProvider } from 'ethers';
-
-const provider = new BrowserProvider(window.ethereum);
-
-<FhevmProvider provider={provider}>
-  <App />
-</FhevmProvider>
-```
-
-### 2. Use React Hooks
-
-The SDK provides several hooks for easy integration:
+The `EncryptionDemo` component shows how to encrypt data client-side:
 
 ```tsx
-import { useEncryptedInput, useFhevmContract } from '@fhevm/sdk/react';
+import { useEncryptedInput } from '@fhevm/sdk/react';
 
 function MyComponent() {
+  const { encrypt, isEncrypting } = useEncryptedInput();
+
+  const handleEncrypt = async () => {
+    const encrypted = await encrypt(42, 'uint32');
+    // Use encrypted.data and encrypted.handles with contract
+  };
+
+  return <button onClick={handleEncrypt}>Encrypt</button>;
+}
+```
+
+### 2. Contract Interaction with Computation Demo
+
+The `ComputationDemo` shows encrypted contract interactions:
+
+```tsx
+import { useFhevmContract, useEncryptedInput } from '@fhevm/sdk/react';
+
+function ContractDemo() {
   const { encrypt } = useEncryptedInput();
   const contract = useFhevmContract({
     address: CONTRACT_ADDRESS,
@@ -67,66 +135,137 @@ function MyComponent() {
     withSigner: true
   });
 
-  const handleSubmit = async (value: number) => {
-    // Encrypt the input
+  const submitEncrypted = async (value: number) => {
     const encrypted = await encrypt(value, 'uint32');
+    const tx = await contract.addValue(encrypted.data, encrypted.handles);
+    await tx.wait();
+  };
 
-    // Send to contract
-    await contract.submitValue(encrypted.data, encrypted.handles);
+  return <button onClick={() => submitEncrypted(42)}>Submit</button>;
+}
+```
+
+### 3. Using Enhanced Custom Hooks
+
+Enhanced hooks with validation and error handling:
+
+```tsx
+import { useEncryption } from '../hooks/useEncryption';
+
+function SafeEncryption() {
+  const { encrypt, isEncrypting, error } = useEncryption();
+
+  const handleEncrypt = async () => {
+    try {
+      const encrypted = await encrypt(value, 'uint32');
+      // Automatically validated and sanitized
+    } catch (err) {
+      console.error('Encryption failed:', error);
+    }
   };
 }
 ```
 
-### 3. Interact with Encrypted Contracts
+## 🎨 Components Showcase
 
-The SDK handles all encryption/decryption workflows:
+### UI Components
 
-- **Encryption**: Client-side using FHE public key
-- **Decryption**: Via EIP-712 signatures and KMS
-- **Contract Calls**: Standard ethers.js interface
+- **Button** - Styled button with variants (primary, secondary, outline)
+- **Input** - Form input with label and error support
+- **Card** - Container component for content sections
 
-## Key Components
+### FHE Components
 
-- `app/page.tsx` - Main page with wallet connection and demo
-- `app/layout.tsx` - Root layout configuration
-- `app/globals.css` - Global styles with Tailwind
+- **FHEProvider** - Context provider for FHE functionality
+- **EncryptionDemo** - Interactive encryption demonstration
+- **ComputationDemo** - Homomorphic computation showcase
+- **KeyManager** - Display and manage encryption keys
 
-## SDK Usage Examples
+## 🔧 API Routes
 
-### Encrypting Different Types
+### `/api/fhe/encrypt`
 
-```tsx
-// Encrypt uint32
-const encrypted32 = await encrypt(42, 'uint32');
+Demonstration endpoint for encryption operations (encryption should be client-side in production).
 
-// Encrypt uint64
-const encrypted64 = await encrypt(1000000n, 'uint64');
+### `/api/fhe/decrypt`
 
-// Encrypt boolean
-const encryptedBool = await encrypt(true, 'bool');
+Handles decryption requests via KMS gateway.
 
-// Encrypt address
-const encryptedAddr = await encrypt('0x...', 'address');
+### `/api/fhe/compute`
+
+Demonstrates homomorphic computation capabilities.
+
+### `/api/keys`
+
+Provides public key information for encryption.
+
+## 🛠️ Development
+
+### Available Scripts
+
+```bash
+# Development
+npm run dev          # Start dev server
+npm run build        # Build for production
+npm run start        # Start production server
+
+# Code Quality
+npm run lint         # Run ESLint
 ```
 
-### Decrypting Values
+### Environment Variables
 
-```tsx
-import { useDecrypt } from '@fhevm/sdk/react';
+Create a `.env.local` file:
 
-const { decrypt, result } = useDecrypt();
-
-// Decrypt with user authorization
-await decrypt(contractAddress, handle);
-console.log(result.value); // Decrypted value
+```env
+NEXT_PUBLIC_CHAIN_ID=11155111
+NEXT_PUBLIC_GATEWAY_URL=https://gateway.fhevm.io
+NEXT_PUBLIC_ACL_ADDRESS=0x...
 ```
 
-## Learn More
+## 📚 Learn More
 
-- [FHEVM SDK Documentation](../../packages/fhevm-sdk/README.md)
+### SDK Documentation
+
+- [FHEVM SDK README](../../packages/fhevm-sdk/README.md)
+- [Core API Reference](../../packages/fhevm-sdk/src/README.md)
+
+### Next.js Resources
+
 - [Next.js Documentation](https://nextjs.org/docs)
-- [Zama FHEVM](https://docs.zama.ai)
+- [App Router Guide](https://nextjs.org/docs/app)
 
-## License
+### FHE Resources
 
-MIT
+- [Zama FHEVM Documentation](https://docs.zama.ai/)
+- [fhevmjs Library](https://github.com/zama-ai/fhevmjs)
+
+## ✨ Key Features Demonstrated
+
+1. **Complete SDK Integration** - Shows all major SDK features
+2. **Modern Next.js Patterns** - App Router, Server Components, API Routes
+3. **Type Safety** - Full TypeScript implementation
+4. **Error Handling** - Robust error handling and validation
+5. **Security Best Practices** - Input validation, sanitization
+6. **Responsive Design** - Mobile-friendly UI with Tailwind CSS
+7. **Developer Experience** - Clear code organization and comments
+
+## 🔐 Security Considerations
+
+- All encryption happens client-side
+- No private keys are stored or transmitted
+- Input validation on all user inputs
+- Proper error handling without exposing internals
+- Rate limiting helpers available
+
+## 🤝 Contributing
+
+This example is part of the FHEVM SDK project. Contributions and improvements are welcome!
+
+## 📄 License
+
+MIT License - see [LICENSE](../../LICENSE) for details.
+
+---
+
+**Part of the FHEVM SDK** - Making confidential computing accessible to every developer.

@@ -1,107 +1,15 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { BrowserProvider } from 'ethers';
-import { FhevmProvider, useFhevmClient, useEncryptedInput, useFhevmContract } from '@fhevm/sdk/react';
-
-// Sample contract ABI
-const COUNTER_ABI = [
-  {
-    inputs: [
-      { internalType: 'bytes', name: 'encryptedValue', type: 'bytes' },
-      { internalType: 'bytes32[]', name: 'handles', type: 'bytes32[]' }
-    ],
-    name: 'addValue',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function'
-  },
-  {
-    inputs: [],
-    name: 'getCount',
-    outputs: [{ internalType: 'uint256', name: '', type: 'uint256' }],
-    stateMutability: 'view',
-    type: 'function'
-  }
-];
-
-const CONTRACT_ADDRESS = '0x0000000000000000000000000000000000000000'; // Replace with actual contract
-
-function CounterDemo() {
-  const { encrypt, isEncrypting } = useEncryptedInput();
-  const contract = useFhevmContract({
-    address: CONTRACT_ADDRESS,
-    abi: COUNTER_ABI,
-    withSigner: true
-  });
-
-  const [value, setValue] = useState('');
-  const [status, setStatus] = useState('');
-
-  const handleEncryptAndSubmit = async () => {
-    if (!contract || !value) return;
-
-    try {
-      setStatus('Encrypting...');
-      const encrypted = await encrypt(parseInt(value), 'uint32');
-
-      setStatus('Sending transaction...');
-      const tx = await contract.addValue(encrypted.data, encrypted.handles);
-
-      setStatus('Waiting for confirmation...');
-      await tx.wait();
-
-      setStatus('Success! Value encrypted and submitted.');
-      setValue('');
-    } catch (error) {
-      console.error('Error:', error);
-      setStatus(`Error: ${error instanceof Error ? error.message : 'Unknown error'}`);
-    }
-  };
-
-  return (
-    <div className="space-y-4">
-      <h2 className="text-2xl font-bold">Encrypted Counter Demo</h2>
-
-      <div className="space-y-2">
-        <label className="block text-sm font-medium">
-          Enter a number to encrypt:
-        </label>
-        <input
-          type="number"
-          value={value}
-          onChange={(e) => setValue(e.target.value)}
-          className="w-full px-4 py-2 border rounded-lg"
-          placeholder="Enter a number"
-        />
-      </div>
-
-      <button
-        onClick={handleEncryptAndSubmit}
-        disabled={isEncrypting || !value || !contract}
-        className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
-      >
-        {isEncrypting ? 'Encrypting...' : 'Encrypt & Submit'}
-      </button>
-
-      {status && (
-        <div className="p-4 bg-gray-100 rounded-lg">
-          <p className="text-sm">{status}</p>
-        </div>
-      )}
-
-      <div className="mt-8 p-6 bg-blue-50 rounded-lg">
-        <h3 className="font-semibold mb-2">How it works:</h3>
-        <ol className="list-decimal list-inside space-y-1 text-sm">
-          <li>Enter a number in the input field</li>
-          <li>The SDK encrypts the number using FHEVM</li>
-          <li>The encrypted data is sent to the smart contract</li>
-          <li>The contract stores the encrypted value without seeing its contents</li>
-        </ol>
-      </div>
-    </div>
-  );
-}
+import { FhevmProvider } from '@fhevm/sdk/react';
+import { EncryptionDemo } from '../src/components/fhe/EncryptionDemo';
+import { ComputationDemo } from '../src/components/fhe/ComputationDemo';
+import { KeyManager } from '../src/components/fhe/KeyManager';
+import { BankingExample } from '../src/components/examples/BankingExample';
+import { MedicalExample } from '../src/components/examples/MedicalExample';
+import { Card } from '../src/components/ui/Card';
+import { Button } from '../src/components/ui/Button';
 
 function WalletConnector() {
   const [provider, setProvider] = useState<BrowserProvider | null>(null);
@@ -133,19 +41,30 @@ function WalletConnector() {
   if (!provider) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100">
-        <div className="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full">
-          <h1 className="text-3xl font-bold text-center mb-6">FHEVM Next.js Example</h1>
+        <Card className="max-w-md w-full">
+          <h1 className="text-3xl font-bold text-center mb-6">FHEVM Next.js SDK Demo</h1>
           <p className="text-gray-600 text-center mb-8">
-            Connect your wallet to interact with encrypted smart contracts
+            Connect your wallet to explore Fully Homomorphic Encryption on blockchain
           </p>
-          <button
+          <Button
             onClick={connectWallet}
             disabled={isConnecting}
-            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:bg-gray-400"
+            className="w-full"
+            size="lg"
           >
             {isConnecting ? 'Connecting...' : 'Connect MetaMask'}
-          </button>
-        </div>
+          </Button>
+
+          <div className="mt-6 p-4 bg-blue-50 rounded-lg">
+            <h3 className="font-semibold mb-2 text-sm">What you'll see:</h3>
+            <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
+              <li>Client-side encryption with FHE</li>
+              <li>Homomorphic computation demos</li>
+              <li>Key management interface</li>
+              <li>Smart contract integration</li>
+            </ul>
+          </div>
+        </Card>
       </div>
     );
   }
@@ -153,37 +72,113 @@ function WalletConnector() {
   return (
     <FhevmProvider provider={provider}>
       <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-12 px-4">
-        <div className="max-w-4xl mx-auto">
-          <div className="bg-white rounded-2xl shadow-xl p-8">
-            <div className="flex justify-between items-center mb-8">
-              <h1 className="text-3xl font-bold">FHEVM Next.js Example</h1>
-              <div className="text-sm text-gray-600">
-                Connected: {account.slice(0, 6)}...{account.slice(-4)}
+        <div className="max-w-7xl mx-auto">
+          {/* Header */}
+          <div className="bg-white rounded-2xl shadow-xl p-8 mb-8">
+            <div className="flex justify-between items-center">
+              <div>
+                <h1 className="text-4xl font-bold mb-2">FHEVM SDK Showcase</h1>
+                <p className="text-gray-600">
+                  Explore Fully Homomorphic Encryption with Next.js
+                </p>
+              </div>
+              <div className="text-right">
+                <div className="text-sm text-gray-500 mb-1">Connected</div>
+                <div className="text-sm font-mono bg-gray-100 px-3 py-1 rounded">
+                  {account.slice(0, 6)}...{account.slice(-4)}
+                </div>
               </div>
             </div>
-
-            <CounterDemo />
           </div>
 
-          <div className="mt-8 bg-white rounded-2xl shadow-xl p-8">
-            <h2 className="text-2xl font-bold mb-4">About This Example</h2>
-            <p className="text-gray-700 mb-4">
-              This Next.js application demonstrates how to use the <code className="bg-gray-100 px-2 py-1 rounded">@fhevm/sdk</code> package
-              to interact with encrypted smart contracts.
-            </p>
-            <p className="text-gray-700 mb-4">
-              The SDK provides React hooks that make it easy to:
-            </p>
-            <ul className="list-disc list-inside space-y-2 text-gray-700 mb-4">
-              <li>Initialize FHEVM instances with <code className="bg-gray-100 px-2 py-1 rounded">FhevmProvider</code></li>
-              <li>Encrypt inputs with <code className="bg-gray-100 px-2 py-1 rounded">useEncryptedInput()</code></li>
-              <li>Connect to contracts with <code className="bg-gray-100 px-2 py-1 rounded">useFhevmContract()</code></li>
-              <li>Decrypt outputs with <code className="bg-gray-100 px-2 py-1 rounded">useDecrypt()</code></li>
-            </ul>
-            <p className="text-gray-700">
-              All encryption happens client-side, ensuring your sensitive data never leaves your browser unencrypted.
-            </p>
+          {/* Main Content Grid */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <EncryptionDemo />
+            <ComputationDemo />
           </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <KeyManager />
+
+            {/* SDK Features */}
+            <Card title="SDK Features">
+              <div className="space-y-4">
+                <div className="p-4 bg-gradient-to-r from-blue-50 to-blue-100 rounded-lg">
+                  <h4 className="font-semibold mb-2">Framework-Agnostic Core</h4>
+                  <p className="text-sm text-gray-700">
+                    Works with Next.js, React, Vue, or vanilla JavaScript
+                  </p>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-purple-50 to-purple-100 rounded-lg">
+                  <h4 className="font-semibold mb-2">React Hooks</h4>
+                  <p className="text-sm text-gray-700">
+                    useEncryptedInput, useFhevmContract, useDecrypt
+                  </p>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-green-50 to-green-100 rounded-lg">
+                  <h4 className="font-semibold mb-2">Full Type Safety</h4>
+                  <p className="text-sm text-gray-700">
+                    Complete TypeScript definitions for all operations
+                  </p>
+                </div>
+
+                <div className="p-4 bg-gradient-to-r from-orange-50 to-orange-100 rounded-lg">
+                  <h4 className="font-semibold mb-2">Easy Integration</h4>
+                  <p className="text-sm text-gray-700">
+                    Less than 10 lines of code to get started
+                  </p>
+                </div>
+              </div>
+            </Card>
+          </div>
+
+          {/* Real-World Use Case Examples */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+            <BankingExample />
+            <MedicalExample />
+          </div>
+
+          {/* About Section */}
+          <Card>
+            <h2 className="text-2xl font-bold mb-4">About This Demo</h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <h3 className="font-semibold mb-2">What is FHE?</h3>
+                <p className="text-sm text-gray-700 mb-4">
+                  Fully Homomorphic Encryption (FHE) allows computations on encrypted data
+                  without decryption. This enables privacy-preserving blockchain applications
+                  where smart contracts can process sensitive data while keeping it encrypted.
+                </p>
+                <h3 className="font-semibold mb-2">SDK Capabilities:</h3>
+                <ul className="list-disc list-inside space-y-1 text-sm text-gray-700">
+                  <li>Client-side encryption (uint8-uint128, bool, address)</li>
+                  <li>EIP-712 based user decryption</li>
+                  <li>Public decryption for non-sensitive data</li>
+                  <li>Seamless contract integration</li>
+                </ul>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Use Cases:</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="p-3 bg-blue-50 rounded">
+                    <strong>DeFi:</strong> Private balances and trading
+                  </div>
+                  <div className="p-3 bg-green-50 rounded">
+                    <strong>Healthcare:</strong> Encrypted medical records
+                  </div>
+                  <div className="p-3 bg-purple-50 rounded">
+                    <strong>Voting:</strong> Secret ballot systems
+                  </div>
+                  <div className="p-3 bg-orange-50 rounded">
+                    <strong>Gaming:</strong> Hidden game state
+                  </div>
+                </div>
+              </div>
+            </div>
+          </Card>
         </div>
       </div>
     </FhevmProvider>
